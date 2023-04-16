@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { styles } from "./styles";
 import { Header } from "../../components/Header";
-import { Text, TextInput, TouchableOpacity, View, FlatList } from "react-native";
+import { Text, TextInput, TouchableOpacity, View, FlatList, Alert } from "react-native";
 import { PlusCircle, Notepad } from "phosphor-react-native";
 import { Task } from "../../components/Task";
 
@@ -13,17 +13,23 @@ export function Home(){
   const [newTask,setNewTask] = useState('')
   
 
-  function handleTaskAdd(taskToAdd){
-    const task = {
-      id: tasks.length + 1, 
-      content: taskToAdd, 
-      completed: false
+  function handleTaskAdd( content:string) {
+    setNewTask('');
+  
+    if (content.trim() === '' || content == null || content ==undefined) {
+      Alert.alert('Ops..', 'Você se esqueceu de nomear sua tarefa');
+      return;
     }
-    setTasks(prevState => [...prevState,task])
+  
+    const lastId = tasks?.reduce((maxId, task) => Math.max(task.id, maxId), 0) ?? 0;
+    const id = lastId + 1;
+    const task = { id, content, completed: false };
+  
+    setTasks(prevState => [...prevState, task]);
   }
-
+ 
   function handleRemoveTask(){
-
+    
   }
 
  
@@ -68,7 +74,7 @@ export function Home(){
 
      
       <FlatList 
-      style={{marginTop: 20}}
+        style={{marginTop: 20}}
         keyExtractor={ (item) => item.id.toString()}
         data={tasks}
         renderItem={({item}) => ( 

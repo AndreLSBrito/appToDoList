@@ -2,6 +2,7 @@ import{ styles} from './styles'
 import { Text, TextInput, TouchableOpacity, View, FlatList } from "react-native";
 import {Trash, Check} from 'phosphor-react-native'
 import {Feather} from '@expo/vector-icons'
+import { Home } from '../../screens/Home';
 
 
 
@@ -12,6 +13,12 @@ interface TaskProps{
 }
 
 export function Task({id, content, completed}:TaskProps){
+
+  function handleRemoveTask(){
+    console.log()    
+  }
+
+
   return(
     <View style={styles.task}>
       <TouchableOpacity
@@ -36,7 +43,12 @@ export function Task({id, content, completed}:TaskProps){
         </Text>
       </TouchableOpacity>
       
-      <Trash style={styles.iconTrash} color='#E25858'/>
+      <TouchableOpacity
+        onPress={handleRemoveTask}
+      >
+        <Trash style={styles.iconTrash} color='#E25858'/>
+      </TouchableOpacity>
+      
     </View>
  
   );
