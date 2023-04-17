@@ -2,7 +2,7 @@ import{ styles} from './styles'
 import { Text, TextInput, TouchableOpacity, View, FlatList } from "react-native";
 import {Trash, Check} from 'phosphor-react-native'
 import {Feather} from '@expo/vector-icons'
-import { Home } from '../../screens/Home';
+
 
 
 
