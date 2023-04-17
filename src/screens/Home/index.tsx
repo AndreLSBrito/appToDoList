@@ -2,8 +2,9 @@ import React, {useState} from 'react'
 import { styles } from "./styles";
 import { Header } from "../../components/Header";
 import { Text, TextInput, TouchableOpacity, View, FlatList, Alert } from "react-native";
-import { PlusCircle, Notepad } from "phosphor-react-native";
-import { Task } from "../../components/Task";
+import { PlusCircle, Notepad, Trash } from "phosphor-react-native";
+import {Feather} from '@expo/vector-icons'
+
 
 
 export function Home(){
@@ -28,11 +29,24 @@ export function Home(){
     setTasks(prevState => [...prevState, task]);
   }
  
-  function handleRemoveTask(){
-    
+  function handleRemoveTask(id, content){
+    Alert.alert('Remover tarefa',`Tem certeza que deseja remover "${content}" de sua lista de tarefas?`,[
+      {
+        text: 'Sim',
+        onPress: () => setTasks(prevState => tasks.filter((task) => task.id !== id))
+      },
+      {
+        text: 'Não',
+        style: 'cancel'
+      }
+    ])
   }
 
- 
+  function handleTaskToggle(id,checked){
+    const taskIndex = tasks.findIndex((task)=> task.id === id)
+    tasks[taskIndex].completed = !checked 
+    setTasks([...tasks])
+  }
 
   return(
     <View >
@@ -58,7 +72,7 @@ export function Home(){
           <Text 
             style={{paddingHorizontal: 4, height:19, backgroundColor: '#333333', borderRadius: 999, alignItems: "center"}}
           >
-            999999
+            {tasks.length}
           </Text>
         </View>
 
@@ -67,7 +81,7 @@ export function Home(){
           <Text 
             style={{paddingHorizontal: 4, height:19, backgroundColor: '#333333', borderRadius: 999, alignItems: "center"}}
           >
-            0
+            {tasks.filter((task) => task.completed === true).length}
           </Text>
         </View>
       </View>
@@ -79,11 +93,42 @@ export function Home(){
         data={tasks}
         renderItem={({item}) => ( 
           <View style={{flex: 1, paddingLeft:24}}>
-            <Task
+            {/* <Task
               id={item.id}
               content={item.content}
               completed={item.completed}
-            />
+            /> */}
+            <View style={styles.task}>
+              <TouchableOpacity
+                style={styles.checkboxRoot}
+                activeOpacity={0.7}
+                onPress={() => handleTaskToggle(item.id,item.completed)}
+              > 
+                { 
+                  item.completed 
+                  ?
+                  <Feather 
+                    name="check"
+                    style={styles.iconCheck}
+                    size={22}
+                    color="white"
+                  /> 
+                  :
+                  <View style={styles.checkboxIndicator}/>
+                }
+
+                <Text style={{color:'white', width: 235}}>
+                  {item.content}
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                onPress={() => handleRemoveTask(item.id, item.content)}
+              >
+                <Trash style={styles.iconTrash} color='#E25858'/>
+              </TouchableOpacity>
+              
+            </View>
           </View>
         )}
         showsVerticalScrollIndicator={false}
