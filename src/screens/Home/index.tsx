@@ -1,19 +1,36 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { styles } from "./styles";
 import { Header } from "../../components/Header";
 import { Text, TextInput, TouchableOpacity, View, FlatList, Alert } from "react-native";
 import { PlusCircle, Notepad, Trash } from "phosphor-react-native";
 import {Feather} from '@expo/vector-icons'
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export function Home(){
-  
 
   const [tasks,setTasks] = useState([])
   const [newTask,setNewTask] = useState('')
   
+  useEffect(() => {
+    loadTasks()
+  }, []);
 
+  useEffect(() => {
+    saveOnStorage()
+  }, [tasks]);
+
+  async function loadTasks() {
+    try {
+      const storedTasks = await AsyncStorage.getItem('tasks');
+      const storage = storedTasks != null ? JSON.parse(storedTasks) : [];
+      setTasks(storage);
+    } catch (e) {
+      console.log('Erro ao carregar as tarefas', e);
+    }
+  }
+
+  //function to add task in the begining list of tasks
   function handleTaskAdd( content:string) {
     setNewTask('');
   
@@ -25,10 +42,11 @@ export function Home(){
     const lastId = tasks?.reduce((maxId, task) => Math.max(task.id, maxId), 0) ?? 0;
     const id = lastId + 1;
     const task = { id, content, completed: false };
-  
-    setTasks(prevState => [...prevState, task]);
+    const actualTask = [task,...tasks]
+    setTasks(actualTask);
   }
- 
+
+ //function to remove task from list of tasks
   function handleRemoveTask(id, content){
     Alert.alert('Remover tarefa',`Tem certeza que deseja remover "${content}" de sua lista de tarefas?`,[
       {
@@ -37,15 +55,36 @@ export function Home(){
       },
       {
         text: 'Não',
-        style: 'cancel'
+        style: 'cancel',
+        onPress: ()=> {return}
       }
     ])
   }
 
+  //function to toggle checked or uncheked into the task
   function handleTaskToggle(id,checked){
     const taskIndex = tasks.findIndex((task)=> task.id === id)
     tasks[taskIndex].completed = !checked 
-    setTasks([...tasks])
+    setTasks([...tasks.sort(sortByNoCompleted)])
+  }
+
+  //function to sort the list when the user toggle the task
+  function sortByNoCompleted(a,b){
+    if (a.completed && !b.completed) {
+      return 1; // a deve ser classificado antes de a
+    } else if (!a.completed && b.completed) {
+      return -1; // b deve ser classificado antes de b
+    } else {
+      return 0; // a e b são iguais em relação à classificação
+    }
+  }
+
+  async function saveOnStorage(){
+    try {
+      AsyncStorage.setItem('tasks', JSON.stringify(tasks))
+    } catch (e) {
+      console.log('Erro ao salvar as tarefas', e);
+    }
   }
 
   return(
@@ -117,7 +156,7 @@ export function Home(){
                   <View style={styles.checkboxIndicator}/>
                 }
 
-                <Text style={{color:'white', width: 235}}>
+                <Text style={{color: item.completed? 'gray':'white', width: 235, textDecorationLine: item.completed ? 'line-through' : 'none'}}>
                   {item.content}
                 </Text>
               </TouchableOpacity>
