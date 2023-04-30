@@ -26,10 +26,10 @@ export const styles = StyleSheet.create({
   checkboxIndicator: {
     height: 24,
     width: 24,
-    backgroundColor: '#ccc',
+    backgroundColor: '#262626',
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#4EA8DE'
+    borderColor: '#333333'
   },
   
   

@@ -32,7 +32,7 @@ export function Task({id, content, completed}:TaskProps){
             name="check"
             style={styles.iconCheck}
             size={22}
-            color="white"
+            color='#262626'
           /> 
           :
           <View style={styles.checkboxIndicator}/>

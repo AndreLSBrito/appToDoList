@@ -93,6 +93,7 @@ export function Home(){
       <View style={styles.container}>
         <TextInput style={styles.input}
           placeholder="Adicione uma nova tarefa"
+          placeholderTextColor='#808080'
           onChangeText={setNewTask}
           value={newTask}
         />
@@ -101,7 +102,7 @@ export function Home(){
           onPress={() => handleTaskAdd(newTask)}  
         >
           
-          <PlusCircle weight="thin"/>
+          <PlusCircle weight="thin" color='#fff'/>
         
         </TouchableOpacity>
       </View>
